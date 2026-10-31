@@ -446,7 +446,7 @@ function viewArticle(id){
  countView('news',n.id);
  const ti=LT(n.title),le=LT(n.lead),bo=LT(n.body),fb=ti.fb||bo.fb||le.fb;
  const photos=(n.photos||[]).filter(Boolean);
- const link='/baribar-kandyagash-demo/n/'+n.id+'/';  // [siteT] страница с превью для WhatsApp
+ const link='/n/'+n.id+'/';  // [siteT] страница с превью для WhatsApp
  const msg=`📰 ${ti.text}\n${le.text?le.text+'\n':''}${link}`;
  app.innerHTML=`<div class="crumbs"><button class="back" onclick="location.hash='#/news'" aria-label="${t('back')}">←</button><h1 class="sm">📰 ${t('newsTitle')}</h1></div>
  <article class="article">
@@ -512,7 +512,7 @@ let sortMode='list';
 // Статическая страница /s/… уже содержит og:title раздела. Хеш #/c/… WhatsApp не читает.
 function catShareUrl(sectionId,subId){
  const sub=subId&&subById[subId]&&subById[subId].section===sectionId?subId:'';
- return '/baribar-kandyagash-demo/?lang='+lang+'#/c/'+encodeURIComponent(sectionId)+(sub?'/'+encodeURIComponent(sub):'');
+ return '/?lang='+lang+'#/c/'+encodeURIComponent(sectionId)+(sub?'/'+encodeURIComponent(sub):'');
 }
 function viewCat(id,subId,focusId){  // focusId: #/c/<раздел>/<подраздел>/<id карточки> — ссылка на конкретную карточку (кнопка «📲 Отправить автору» в админке)
  const s=secById[id];if(!s)return viewHome();

@@ -23,9 +23,9 @@ const dismissed=()=>{const v=+localStorage.getItem(DK)||0;return v&&Date.now()-v
 let deferred=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;refresh()});
 window.addEventListener('appinstalled',()=>{deferred=null;track('installed');refresh()});
-function track(m){try{A.track&&A.track('install',{p_path:'/baribar-kandyagash-demo/install/'+m})}catch(e){}}
+function track(m){try{A.track&&A.track('install',{p_path:'/install/'+m})}catch(e){}}
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'))
- window.addEventListener('load',()=>navigator.serviceWorker.register('/baribar-kandyagash-demo/sw.js').catch(()=>{}));
+ window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 function canShow(){return !standalone()&&!dismissed()&&(deferred||MOBILE)}
 function banner(){if(!canShow())return '';
  return `<div class="pwa-b" id="pwab"><span class="pwa-i">📲</span><span class="pwa-t"><b>${esc(t('pwaT').replace(/^📲\s*/,''))}</b><small>${t('pwaS')}</small></span>
@@ -53,7 +53,7 @@ async function go(){
 function view(){A.setMeta(t('pwaPage')+' — izde.kz','');
  const kind=INAPP?'inapp':(IOS?'ios':'and');
  A.app.innerHTML=`<div class="crumbs"><button class="back" onclick="location.hash='#/menu'" aria-label="${t('back')}">←</button><h1>📲 ${t('pwaPage')}</h1></div>
- <div id="pwapage" class="pwa-page"><img src="/baribar-kandyagash-demo/icon-192.png" width="72" height="72" alt="" class="pwa-icon"><p>${t('pwaPageS')}</p>
+ <div id="pwapage" class="pwa-page"><img src="/icon-192.png" width="72" height="72" alt="" class="pwa-icon"><p>${t('pwaPageS')}</p>
  ${standalone()?`<p class="demo-note live">${t('pwaDone')}</p>`:(deferred&&!INAPP?`<button class="btn primary" data-pwa="go">${t('pwaInstall')}</button>`:steps(kind))}</div>`}
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-pwa]');if(!b)return;ev.preventDefault();
  if(b.dataset.pwa==='x'){localStorage.setItem(DK,String(Date.now()));const x=document.getElementById('pwab');if(x)x.remove();return}

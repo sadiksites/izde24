@@ -25,7 +25,7 @@ function create(opts){
  async function fresh(){
   if(!opts.auth||!session)return;
   if(session.expires_at&&session.expires_at-60>Date.now()/1000)return;
-  try{const s=await raw('POST','/baribar-kandyagash-demo/auth/v1/token?grant_type=refresh_token',{refresh_token:session.refresh_token});save(norm(s))}
+  try{const s=await raw('POST','/auth/v1/token?grant_type=refresh_token',{refresh_token:session.refresh_token});save(norm(s))}
   catch(e){save(null)}
  }
  const norm=s=>Object.assign({},s,{expires_at:s.expires_at||Math.floor(Date.now()/1000)+(+s.expires_in||3600)});
@@ -42,26 +42,26 @@ function create(opts){
   // Storage (фото новостей): загрузка/удаление — только с токеном администратора (политики storage.objects)
   async upload(bucket,path,blob,contentType){if(!enabled)throw new Error('backend_disabled');await fresh();
    const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),60000);
-   try{const r=await fetch(url+'/baribar-kandyagash-demo/storage/v1/object/'+bucket+'/'+path,{method:'POST',signal:ctl.signal,body:blob,
+   try{const r=await fetch(url+'/storage/v1/object/'+bucket+'/'+path,{method:'POST',signal:ctl.signal,body:blob,
      headers:Object.assign({apikey:key,'Content-Type':contentType||blob.type||'application/octet-stream','cache-control':'max-age=31536000','x-upsert':'false'},session&&session.access_token?{Authorization:'Bearer '+session.access_token}:{})});
     const txt=await r.text();let d=null;try{d=JSON.parse(txt)}catch(e){d=txt}
     if(!r.ok){const err=new Error((d&&(d.message||d.error))||r.statusText);err.status=r.status;throw err}
     return{path,url:api.publicUrl(bucket,path)}}finally{clearTimeout(tm)}},
   async removeFile(bucket,path){if(!enabled)throw new Error('backend_disabled');await fresh();
-   const r=await fetch(url+'/baribar-kandyagash-demo/storage/v1/object/'+bucket+'/'+path,{method:'DELETE',headers:Object.assign({apikey:key},session&&session.access_token?{Authorization:'Bearer '+session.access_token}:{})});
+   const r=await fetch(url+'/storage/v1/object/'+bucket+'/'+path,{method:'DELETE',headers:Object.assign({apikey:key},session&&session.access_token?{Authorization:'Bearer '+session.access_token}:{})});
    if(!r.ok&&r.status!==404){const err=new Error('storage '+r.status);err.status=r.status;throw err}},
-  publicUrl:(bucket,path)=>url+'/baribar-kandyagash-demo/storage/v1/object/public/'+bucket+'/'+path.split('/').map(encodeURIComponent).join('/'),
+  publicUrl:(bucket,path)=>url+'/storage/v1/object/public/'+bucket+'/'+path.split('/').map(encodeURIComponent).join('/'),
   session:()=>session,
-  async signInWithPassword(email,password){const s=await raw('POST','/baribar-kandyagash-demo/auth/v1/token?grant_type=password',{email,password});save(norm(s));return session},
-  async signInWithOtp(email,redirectTo){return raw('POST','/baribar-kandyagash-demo/auth/v1/otp?redirect_to='+encodeURIComponent(redirectTo),{email,create_user:false})},
+  async signInWithPassword(email,password){const s=await raw('POST','/auth/v1/token?grant_type=password',{email,password});save(norm(s));return session},
+  async signInWithOtp(email,redirectTo){return raw('POST','/auth/v1/otp?redirect_to='+encodeURIComponent(redirectTo),{email,create_user:false})},
   handleRedirect(){ // ссылка из письма: #access_token=...&refresh_token=...
    const h=new URLSearchParams(location.hash.replace(/^#/,''));
    if(h.get('access_token')){save(norm({access_token:h.get('access_token'),refresh_token:h.get('refresh_token'),expires_in:h.get('expires_in')}));history.replaceState(null,'',location.pathname+location.search);return true}
    return false},
   // смена пароля вошедшего пользователя (Supabase Auth: PUT /auth/v1/user); nonce — код из письма, если включено «Secure password change»
-  async updateUser(attrs){if(!session)throw Object.assign(new Error('not_signed_in'),{status:401,errorCode:'session_not_found'});await fresh();return raw('PUT','/baribar-kandyagash-demo/auth/v1/user',attrs,null,15000)},
-  async reauthenticate(){if(!session)throw Object.assign(new Error('not_signed_in'),{status:401,errorCode:'session_not_found'});await fresh();return raw('GET','/baribar-kandyagash-demo/auth/v1/reauthenticate',null,null,15000)},
-  async signOut(){try{await raw('POST','/baribar-kandyagash-demo/auth/v1/logout',null)}catch(e){}save(null)},
+  async updateUser(attrs){if(!session)throw Object.assign(new Error('not_signed_in'),{status:401,errorCode:'session_not_found'});await fresh();return raw('PUT','/auth/v1/user',attrs,null,15000)},
+  async reauthenticate(){if(!session)throw Object.assign(new Error('not_signed_in'),{status:401,errorCode:'session_not_found'});await fresh();return raw('GET','/auth/v1/reauthenticate',null,null,15000)},
+  async signOut(){try{await raw('POST','/auth/v1/logout',null)}catch(e){}save(null)},
   email(){try{return JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).email}catch(e){return ''}}
  };
  return api;

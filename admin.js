@@ -66,7 +66,7 @@ Object.assign(T.kz,{newT:'🔔 Жаңа',noNew:'✅ Жаңа жоқ',newAria:'Т
 Object.assign(T.ru,{shareA:'📲 Отправить автору',shareT:'Отправить автору ссылку в WhatsApp',approvedL:'✅ Объявление одобрено',approvedC:'✅ Карточка одобрена',closeX:'Закрыть'});
 Object.assign(T.kz,{shareA:'📲 Авторға жіберу',shareT:'Авторға сілтемені WhatsApp-қа жіберу',approvedL:'✅ Хабарландыру мақұлданды',approvedC:'✅ Карточка мақұлданды',closeX:'Жабу'});
 // «📲 Отправить автору»: поздравление KZ + RU со ссылкой на опубликованное (без секретного токена автора)
-const PUB='/baribar-kandyagash-demo/';
+const PUB='/';
 const pubLink=(kind,r)=>kind==='l'?PUB+'i/'+r.id+'/':PUB+'#/c/'+encodeURIComponent(r.section_id)+'/'+encodeURIComponent(r.sub_id)+'/'+r.id;
 function shareUrl(kind,r){
  if(!r||r.status!=='approved')return '';

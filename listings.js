@@ -123,7 +123,7 @@ function viewJobs(){const S=SECT.jobs;const q=(location.hash.split('?')[1]||'');
  ${list.length?`<div class="lcards">${list.map(l=>lcard(l)).join('')}</div>`:`<div class="ann-empty">💼 <b>${t('jEmpty')[JT]}</b><span>${t('lEmptyS')}</span><a href="#/post/jobs?k=${JT}" class="lnk">${t('jPost')[JT]}</a></div>`}`;
  A.app.querySelectorAll('[data-jt]').forEach(b=>b.onclick=()=>{JT=b.dataset.jt;history.replaceState(null,'','#/jobs?k='+JT);viewJobs()});
 }
-function contactBtns(l){const name=l.title;const wa=l.has_wa?`https://api.whatsapp.com/send?phone=${l.phone}&text=${encodeURIComponent(t('waGreetL').replace('{t}',()=>l.title).replace('{u}',()=>'/baribar-kandyagash-demo/i/'+l.id+'/'))}`:'';
+function contactBtns(l){const name=l.title;const wa=l.has_wa?`https://api.whatsapp.com/send?phone=${l.phone}&text=${encodeURIComponent(t('waGreetL').replace('{t}',()=>l.title).replace('{u}',()=>'/i/'+l.id+'/'))}`:'';
  return `<div class="actions lact"><a class="btn wa ${wa?'':'off'}" ${wa?`href="${wa}" target="_blank" rel="noopener"`:'aria-disabled="true"'} aria-label="${esc(t('wa'))}">${A.WA_SVG}<span>${t('waS')}</span></a>
   <a class="btn call" href="tel:+${esc(l.phone)}" aria-label="${esc(t('call'))}: ${esc(fmtPhone(l.phone))}">📞 <span>${t('callS')}</span></a></div>`}
 async function viewItem(id){
@@ -131,7 +131,7 @@ async function viewItem(id){
  if(!l&&SB.enabled){try{const r=await SB.get(`listings?select=${COLS}&id=eq.${encodeURIComponent(id)}`,6000);l=r&&r[0]}catch(e){}}
  if(!l){A.app.innerHTML=`<div class="crumbs"><button class="back" onclick="history.length>1?history.back():location.hash='#/'">←</button><h1>🗂</h1></div><div class="empty"><h2>${t('lNotFound')}</h2><a class="btn primary" href="#/bazar">${t('lSec').market}</a></div>`;return}
  const ES=secOf(l),S=SECT[ES];const photos=(l.photos||[]).map(photoUrl).filter(Boolean);const pr=fmtPrice(l);const closed=l.status==='closed';
- const link='/baribar-kandyagash-demo/i/'+l.id+'/';  // [siteT] страница с превью для WhatsApp
+ const link='/i/'+l.id+'/';  // [siteT] страница с превью для WhatsApp
  A.setMeta(l.title+' — '+t('lSec')[ES]+' · izde.kz',(l.body||'').slice(0,150));
  A.app.innerHTML=`<div class="crumbs"><button class="back" onclick="location.hash='#/${ROUTE[ES]}${ES==='jobs'?'?k='+l.kind:''}'" aria-label="${t('back')}">←</button><h1 class="sm">${S.e} ${t('lSec')[ES]}</h1></div>
  <article class="article litem">
@@ -228,7 +228,7 @@ function viewPost(sec){
    done(r,p,sec)}catch(e){A.toast(lerr(e))}})});
 }
 const secretLink=(id,tok)=>location.origin+location.pathname+'#/my/'+id+'/'+tok;
-const pubLink=id=>'/baribar-kandyagash-demo/i/'+id+'/';  // публичная ссылка (превью WhatsApp), без доступа к управлению
+const pubLink=id=>'/i/'+id+'/';  // публичная ссылка (превью WhatsApp), без доступа к управлению
 const pubShare=(title,id,cls)=>`<a class="btn wa sm ${cls||''}" href="https://wa.me/?text=${encodeURIComponent(title+'\n'+pubLink(id))}" target="_blank" rel="noopener">${A.WA_SVG}${t('pSharePub')}</a>`;
 const PHK=id=>'site_own_ph_'+id;const ownPh=id=>{try{return sessionStorage.getItem(PHK(id))||''}catch(e){return ''}};const setOwnPh=(id,v)=>{try{sessionStorage.setItem(PHK(id),v)}catch(e){}};
 const BADPH=v=>v==='bad_phone'||v===null;
